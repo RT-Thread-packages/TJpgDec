@@ -8,7 +8,7 @@
 
 | 文件夹 | 说明 |
 | ---- | ---- |
-| example | Jpeg 解码示例 |
+| examples | Jpeg 解码示例 |
 
 ### 1.2 许可证
 
@@ -20,8 +20,6 @@ TJpgDec 遵循 BSD 许可，详见 `LICENSE` 文件。
 
 ## 2、如何打开 TJpgDec
 
-> 说明：描述该 package 位于 menuconfig 的位置，并对与其相关的配置进行介绍
-
 使用 TJpgDec 需要在 RT-Thread 的包管理器中选择它，具体路径如下：
 
 ```
@@ -30,7 +28,7 @@ RT-Thread online packages
         [*] TJPGDecode: Tiny JPEG Decompressor.  --->
 ```
 
-### 2.2 配置选项说明
+### 2.1 配置选项说明
 
 | 配置选项            | 类型       | 说明                                       |
 |--------------------|------------|-------------------------------------------|
@@ -48,7 +46,7 @@ RT-Thread online packages
 
 TJpgDec 解码库的工作流程包括 Prepare 和 Decompress 两个阶段，核心接口有 `jd_prepare()`、`jd_decomp()`、`in_func()`、`out_func()`，其中 `in_func()` 和 `out_func()` 是数据读写回调函数，需要用户实现。
 
-### 3.1 使用示例代码
+### 3.1 示例代码
 
 勾选 `Enable tipgd sample` 菜单选项启动示例程序，编译工程，系统运行后在 Shell 输入 `Jpeg_Dec xxx.jpg` 命令测试解码库。
 
@@ -74,7 +72,7 @@ msh />
 
 ## 4、注意事项
 
-* 解码过大的图片将消耗大量内存，TJpgDec 库工作需要 3K 的算法内存，以及 `3 * image_width * image_height` Byte 的图像输出缓存（RGB888 格式输出时），请确保系统 RAM 足够。
+* 解码过大的图片将消耗大量内存，TJpgDec 库工作需要 3K 的算法内存，以及 `3 × image_width × image_height` Byte 的图像输出缓存（RGB888 格式输出时），请确保系统 RAM 足够。
 * 若解码出现 `Failed to prepare: rc=3` 错误，请尝试将输出 buffer 改小（一般情况下保持默认选项即可）。
 
 ## 5、联系方式 & 感谢
