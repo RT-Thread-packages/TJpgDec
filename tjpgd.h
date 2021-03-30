@@ -6,7 +6,7 @@
 /*---------------------------------------------------------------------------*/
 /* System Configurations */
 
-#include <rtconfig.h>
+#include <rtthread.h>
 
 #ifdef TJPGD_USING_FORMAT_RGB888
 #define JD_FORMAT       0   /* Output pixel format 0:RGB888 (3 BYTE/pix) 1:RGB565 (1 WORD/pix)*/

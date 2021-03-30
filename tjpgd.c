@@ -107,7 +107,7 @@ static const uint8_t Clip8[1024] = {
 
 #else   /* JD_TBLCLIP */
 
-inline uint8_t BYTECLIP (
+rt_inline uint8_t BYTECLIP (
     int val
 )
 {
