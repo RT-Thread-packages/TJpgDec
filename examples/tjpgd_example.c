@@ -77,20 +77,35 @@ int Jpeg_Dec (int argc, char* argv[])
     IODEV devid;      /* User defined device identifier */
 
     /* Open a JPEG file */
-    if (argc < 2) return -1;
+    if (argc < 2) 
+        return -1;
     devid.fp = fopen(argv[1], "rb");
-    if (!devid.fp) return -1;
+    if (!devid.fp) 
+        return -1;
 
     /* Allocate a work area for TJpgDec */
     work = rt_malloc(3100);
+    if(work == RT_NULL)
+    {
+        rt_kprintf("Jpeg_Dec work malloc failed...\n");
+        res = -1;
+        goto __exit;
+    }
 
     /* Prepare to decompress */
     res = jd_prepare(&jdec, in_func, work, 3100, &devid);
-    if (res == JDR_OK) {
+    if (res == JDR_OK) 
+    {
         /* Ready to dcompress. Image info is available here. */
         rt_kprintf("Image dimensions: %u by %u. %u bytes used.\n", jdec.width, jdec.height, 3100 - jdec.sz_pool);
 
         devid.fbuf = rt_malloc(3 * jdec.width * jdec.height); /* Frame buffer for output image (assuming RGB888 cfg) */
+        if(devid.fbuf == RT_NULL)
+        {
+            rt_kprintf("Jpeg_Dec devid.fbuf malloc failed ...\n");
+            res = -1;
+            goto __exit;
+        }
         devid.wfbuf = jdec.width;
 
         res = jd_decomp(&jdec, out_func, 0);   /* Start to decompress with 1/1 scaling */
@@ -98,18 +113,29 @@ int Jpeg_Dec (int argc, char* argv[])
             /* Decompression succeeded. You have the decompressed image in the frame buffer here. */
             rt_kprintf("\rOK  \n");
 
-        } else {
+        } 
+        else
+        {
             rt_kprintf("Failed to decompress: rc=%d\n", res);
         }
 
-        rt_free(devid.fbuf);    /* Discard frame buffer */
+        if(devid.fbuf != RT_NULL)
+        {
+            rt_free(devid.fbuf);    /* Discard frame buffer */
+        }
 
-    } else {
+    } 
+    else 
+    {
         rt_kprintf("Failed to prepare: rc=%d\n", res);
     }
 
-    rt_free(work);             /* Discard work area */
-
+__exit:
+    if(work != RT_NULL)
+    {
+        rt_free(work);             /* Discard work area */
+    }
+    
     fclose(devid.fp);       /* Close the JPEG file */
 
     return res;
