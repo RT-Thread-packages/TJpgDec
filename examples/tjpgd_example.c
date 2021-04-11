@@ -20,7 +20,7 @@ typedef struct {
 /* User defined input funciton  */
 /*------------------------------*/
 
-uint16_t in_func (JDEC* jd, uint8_t* buff, uint16_t nbyte)
+unsigned int in_func (JDEC* jd, uint8_t* buff, unsigned int nbyte)
 {
     IODEV *dev = (IODEV*)jd->device;   /* Device identifier for the session (5th argument of jd_prepare function) */
 
@@ -39,7 +39,7 @@ uint16_t in_func (JDEC* jd, uint8_t* buff, uint16_t nbyte)
 /* User defined output funciton */
 /*------------------------------*/
 
-uint16_t out_func (JDEC* jd, void* bitmap, JRECT* rect)
+int out_func (JDEC* jd, void* bitmap, JRECT* rect)
 {
     IODEV *dev = (IODEV*)jd->device;
     uint8_t *src, *dst;
@@ -77,11 +77,18 @@ int Jpeg_Dec (int argc, char* argv[])
     IODEV devid;      /* User defined device identifier */
 
     /* Open a JPEG file */
-    if (argc < 2) 
+    if (argc < 2)
+    {
+        rt_kprintf("Jpeg_Dec illegal arguments ...\n");
         return -1;
+    }
+
     devid.fp = fopen(argv[1], "rb");
-    if (!devid.fp) 
+    if (!devid.fp)
+    {
+        rt_kprintf("Jpeg_Dec open the file failed...\n");
         return -1;
+    }
 
     /* Allocate a work area for TJpgDec */
     work = rt_malloc(3100);
@@ -94,7 +101,7 @@ int Jpeg_Dec (int argc, char* argv[])
 
     /* Prepare to decompress */
     res = jd_prepare(&jdec, in_func, work, 3100, &devid);
-    if (res == JDR_OK) 
+    if (res == JDR_OK)
     {
         /* Ready to dcompress. Image info is available here. */
         rt_kprintf("Image dimensions: %u by %u. %u bytes used.\n", jdec.width, jdec.height, 3100 - jdec.sz_pool);
@@ -102,7 +109,7 @@ int Jpeg_Dec (int argc, char* argv[])
         devid.fbuf = rt_malloc(3 * jdec.width * jdec.height); /* Frame buffer for output image (assuming RGB888 cfg) */
         if(devid.fbuf == RT_NULL)
         {
-            rt_kprintf("Jpeg_Dec devid.fbuf malloc failed ...\n");
+            rt_kprintf("Jpeg_Dec devid.fbuf malloc failed, need to use %d Bytes ...\n", 3 * jdec.width * jdec.height);
             res = -1;
             goto __exit;
         }
@@ -113,7 +120,7 @@ int Jpeg_Dec (int argc, char* argv[])
             /* Decompression succeeded. You have the decompressed image in the frame buffer here. */
             rt_kprintf("\rOK  \n");
 
-        } 
+        }
         else
         {
             rt_kprintf("Failed to decompress: rc=%d\n", res);
@@ -124,8 +131,8 @@ int Jpeg_Dec (int argc, char* argv[])
             rt_free(devid.fbuf);    /* Discard frame buffer */
         }
 
-    } 
-    else 
+    }
+    else
     {
         rt_kprintf("Failed to prepare: rc=%d\n", res);
     }
@@ -135,7 +142,7 @@ __exit:
     {
         rt_free(work);             /* Discard work area */
     }
-    
+
     fclose(devid.fp);       /* Close the JPEG file */
 
     return res;
