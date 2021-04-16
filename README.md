@@ -77,7 +77,7 @@ msh />
 
 ## 5、联系方式 & 感谢
 
-* 维护：RT-Thread 开发团队
-* 主页：https://github.com/RT-Thread-packages/TJpgDec
+- 维护：[Meco Man](https://github.com/mysterywolf)
+- 主页：<https://github.com/RT-Thread-packages/vi>
 
 
